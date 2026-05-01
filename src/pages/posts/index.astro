@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+// Get all posts and sort by date
+const allPosts = await getCollection('posts');
+const sortedPosts = allPosts.sort((a, b) => 
+  b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+// Helper to convert date to ISO string
+const toISOString = (date: Date | string): string => {
+  if (typeof date === 'string') return date;
+  return date.toISOString();
+};
+
+// Get unique categories
+const categories = [...new Set(allPosts.map(post => post.data.category))];
+---
+
+<BaseLayout title="所有文章" description="浏览 Agent Universe 的所有文章">
+  <!-- Header -->
+  <div class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">所有文章</h1>
+      <p class="text-lg text-gray-600 dark:text-gray-400">共 {sortedPosts.length} 篇文章</p>
+    </div>
+  </div>
+
+  <!-- Categories Filter -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex flex-wrap gap-3">
+      <a href="/posts" class="px-4 py-2 bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 text-sm font-medium rounded-full hover:bg-primary-200 dark:hover:bg-primary-900 transition-colors">
+        全部
+      </a>
+      {categories.map(cat => (
+        <a href={`/categories/${cat}`} class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-sm font-medium rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+          {cat}
+        </a>
+      ))}
+    </div>
+  </div>
+  
+  <!-- Posts Grid -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {sortedPosts.map(post => (
+        <PostCard 
+          title={post.data.title}
+          description={post.data.description}
+          slug={post.slug}
+          category={post.data.category}
+          publishedTime={toISOString(post.data.pubDate)}
+          readingTime={post.data.readingTime}
+          image={post.data.image}
+          author={post.data.author}
+        />
+      ))}
+    </div>
+  </div>
+</BaseLayout>

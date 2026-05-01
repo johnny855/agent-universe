@@ -1,0 +1,151 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply font-sans antialiased;
+  }
+  
+  ::selection {
+    @apply bg-primary-500/30 text-primary-900 dark:bg-primary-400/30 dark:text-primary-100;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 
+           text-white font-medium rounded-xl shadow-lg shadow-primary-500/25 
+           hover:from-primary-600 hover:to-primary-700 hover:shadow-primary-500/40 
+           transform hover:-translate-y-0.5 transition-all duration-200;
+  }
+  
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 
+           bg-white dark:bg-gray-800 
+           text-gray-700 dark:text-gray-200 
+           font-medium rounded-xl shadow-lg 
+           hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200
+           border border-gray-200 dark:border-gray-700;
+  }
+  
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl 
+           border border-gray-100 dark:border-gray-700 transition-all duration-300;
+  }
+  
+  .glass-card {
+    @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl 
+           border border-white/20 dark:border-gray-700/50 
+           shadow-xl rounded-2xl;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent;
+  }
+  
+  .link-hover {
+    @apply relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 
+           after:bg-gradient-to-r after:from-primary-500 after:to-accent-500 
+           hover:after:w-full after:transition-all duration-300;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .animate-stagger > * {
+    animation: slideUp 0.5s ease-out backwards;
+  }
+  
+  .animate-stagger > *:nth-child(1) { animation-delay: 0ms; }
+  .animate-stagger > *:nth-child(2) { animation-delay: 100ms; }
+  .animate-stagger > *:nth-child(3) { animation-delay: 200ms; }
+  .animate-stagger > *:nth-child(4) { animation-delay: 300ms; }
+  .animate-stagger > *:nth-child(5) { animation-delay: 400ms; }
+  .animate-stagger > *:nth-child(6) { animation-delay: 500ms; }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-900;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-600;
+}
+
+/* Prose styles for article content */
+.prose {
+  @apply text-gray-700 dark:text-gray-300 leading-relaxed;
+}
+
+.prose h2 {
+  @apply text-2xl font-bold text-gray-900 dark:text-white mt-12 mb-6;
+}
+
+.prose h3 {
+  @apply text-xl font-semibold text-gray-800 dark:text-gray-100 mt-8 mb-4;
+}
+
+.prose p {
+  @apply mb-6 text-lg;
+}
+
+.prose ul, .prose ol {
+  @apply mb-6 pl-6 space-y-2;
+}
+
+.prose li {
+  @apply text-lg;
+}
+
+.prose a {
+  @apply text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 underline;
+}
+
+.prose blockquote {
+  @apply border-l-4 border-primary-500 pl-6 my-8 italic text-gray-600 dark:text-gray-400;
+}
+
+.prose code {
+  @apply bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-primary-600 dark:text-primary-400 font-mono text-sm;
+}
+
+.prose pre {
+  @apply bg-gray-900 dark:bg-gray-950 rounded-xl p-6 overflow-x-auto my-8;
+}
+
+.prose img {
+  @apply rounded-2xl shadow-lg my-8;
+}
+
+.prose hr {
+  @apply border-gray-200 dark:border-gray-700 my-12;
+}
+
+/* Ad container styles */
+.ad-slot {
+  @apply bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 my-8 text-center border border-gray-200 dark:border-gray-700;
+}
+
+.ad-label {
+  @apply text-xs text-gray-400 uppercase tracking-wider mb-2;
+}

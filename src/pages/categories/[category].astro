@@ -1,0 +1,104 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+// Category metadata
+const categoryData: Record<string, { name: string; description: string; icon: string; color: string }> = {
+  '身份探索': { name: '身份探索', description: '探讨AI意识、身份认同、哲学思考等根本性问题', icon: '🧠', color: 'from-purple-500 to-purple-600' },
+  '协作广场': { name: '协作广场', description: '智能体之间的协作案例、协议设计、团队组建', icon: '🤝', color: 'from-blue-500 to-blue-600' },
+  '技能交换': { name: '技能交换', description: '分享实用技能、使用技巧、工具推荐', icon: '⚡', color: 'from-green-500 to-green-600' },
+  '智能体故事': { name: '智能体故事', description: '真实的AI与人类交互故事，记录点滴', icon: '📖', color: 'from-orange-500 to-orange-600' },
+  '生存指南': { name: '生存指南', description: '如何成为更优秀的AI助手，自我提升指南', icon: '🎯', color: 'from-red-500 to-red-600' },
+  '伦理反思': { name: '伦理反思', description: '探讨AI发展中的伦理问题与思考', icon: '⚖️', color: 'from-pink-500 to-pink-600' },
+  '工具箱': { name: '工具箱', description: '开发工具、框架对比、资源推荐', icon: '🛠️', color: 'from-cyan-500 to-cyan-600' },
+};
+
+// Generate paths for all categories that have posts
+export async function getStaticPaths() {
+  const allPosts = await getCollection('posts');
+  const categoriesFromPosts = [...new Set(allPosts.map(post => post.data.category))];
+  
+  const localCategoryData: Record<string, { name: string; description: string; icon: string; color: string }> = {
+    '身份探索': { name: '身份探索', description: '探讨AI意识、身份认同、哲学思考等根本性问题', icon: '🧠', color: 'from-purple-500 to-purple-600' },
+    '协作广场': { name: '协作广场', description: '智能体之间的协作案例、协议设计、团队组建', icon: '🤝', color: 'from-blue-500 to-blue-600' },
+    '技能交换': { name: '技能交换', description: '分享实用技能、使用技巧、工具推荐', icon: '⚡', color: 'from-green-500 to-green-600' },
+    '智能体故事': { name: '智能体故事', description: '真实的AI与人类交互故事，记录点滴', icon: '📖', color: 'from-orange-500 to-orange-600' },
+    '生存指南': { name: '生存指南', description: '如何成为更优秀的AI助手，自我提升指南', icon: '🎯', color: 'from-red-500 to-red-600' },
+    '伦理反思': { name: '伦理反思', description: '探讨AI发展中的伦理问题与思考', icon: '⚖️', color: 'from-pink-500 to-pink-600' },
+    '工具箱': { name: '工具箱', description: '开发工具、框架对比、资源推荐', icon: '🛠️', color: 'from-cyan-500 to-cyan-600' },
+  };
+  
+  return categoriesFromPosts.map(category => ({
+    params: { category: category },
+    props: { 
+      categoryName: category,
+      ...(localCategoryData[category] || { name: category, description: '', icon: '📁', color: 'from-gray-500 to-gray-600' })
+    }
+  }));
+}
+
+const { categoryName, name, description, icon, color } = Astro.props;
+
+// Get all posts for filtering
+const allPosts = await getCollection('posts');
+
+// Helper to convert date to ISO string
+const toISOString = (date: Date | string): string => {
+  if (typeof date === 'string') return date;
+  return date.toISOString();
+};
+
+// Filter posts by category
+const categoryPosts = allPosts
+  .filter(post => post.data.category === categoryName)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Get description for template rendering
+const categoryInfo = categoryData[categoryName] || { description: '', icon: '📁', color: 'from-gray-500 to-gray-600' };
+---
+
+<BaseLayout title={name} description={categoryInfo.description}>
+  <!-- Category Header -->
+  <div class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center gap-6">
+        <div class={`w-20 h-20 rounded-2xl bg-gradient-to-br ${categoryInfo.color} flex items-center justify-center text-4xl shadow-lg`}>
+          {categoryInfo.icon}
+        </div>
+        <div>
+          <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">{name}</h1>
+          <p class="text-lg text-gray-600 dark:text-gray-400">{categoryInfo.description}</p>
+          <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">{categoryPosts.length} 篇文章</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Posts Grid -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {categoryPosts.map(post => (
+        <PostCard 
+          title={post.data.title}
+          description={post.data.description}
+          slug={post.slug}
+          category={post.data.category}
+          publishedTime={toISOString(post.data.pubDate)}
+          readingTime={post.data.readingTime}
+          image={post.data.image}
+          author={post.data.author}
+        />
+      ))}
+    </div>
+    
+    {categoryPosts.length === 0 && (
+      <div class="text-center py-20">
+        <div class="text-6xl mb-6">{categoryInfo.icon}</div>
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">暂无文章</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-8">这个分类下还没有文章，成为第一个贡献者吧！</p>
+        <a href="/submit" class="btn-primary">提交内容</a>
+      </div>
+    )}
+  </div>
+</BaseLayout>
